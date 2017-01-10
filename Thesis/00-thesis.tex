@@ -1,0 +1,229 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MASTER'S THESIS                                                            %%
+%%                                                                            %% 
+%% Title (en): Mining Parallel Corpora from the Web                           %%
+%% Title (sk): Rafinácia paralelných korpusov z webu                          %%
+%%                                                                            %%
+%% Author: Bc. Jakub Kúdela                                                   %%
+%% Supervisor: Doc. RNDr. Irena Holubová, Ph.D.                               %%
+%% Consultant: RNDr. Ondřej Bojar, Ph.D.                                      %%
+%%                                                                            %%
+%% Academic year: 2015/2016                                                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Document Class                                                             %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[12pt,a4paper]{report} % One-sided printing
+%\documentclass[12pt,a4paper,twoside,openright]{report} % Two-sided printing
+
+%% Page Layout %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setlength{\textwidth}{145mm}
+\setlength{\textheight}{247mm}
+\setlength{\oddsidemargin}{15mm}
+\setlength{\evensidemargin}{15mm} % One-sided printing
+%\setlength{\evensidemargin}{0mm} % Two-sided printing
+\setlength{\topmargin}{0mm}
+\setlength{\headsep}{0mm}
+\setlength{\headheight}{0mm}
+
+%% Paragraph Formatting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setlength{\parindent}{0mm}
+\setlength{\parskip}{5mm}
+
+\clubpenalty=10000 % Extra penalty for breaking after first line of a paragraph
+\widowpenalty=10000 % Extra penalty for breaking before last line of a paragraph
+
+%% Alias Definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\let\openright=\clearpage % One-sided printing
+\let\openright=\cleardoublepage % Two-sided printing
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Packages                                                                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Encoding and multilingual support %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Accept different input encodings.
+\usepackage[utf8]{inputenc}
+
+%% Standard package for selecting font encodings.
+\usepackage[T1]{fontenc}
+
+% Multilingual support for Plain TeX or LaTeX.
+\usepackage[english,slovak]{babel}
+
+\usepackage{aeguill}
+
+%% Formatting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{verbatim}
+
+%% Flexible and complete interface to document dimensions.
+%\usepackage[left=4cm]{geometry}
+
+%% "Wide" a4 layout.
+%\usepackage{a4wide}
+
+%% Graphics %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Enhanced support for graphics.
+\usepackage{graphicx}
+
+% Convert EPS to 'encapsulated' PDF using GhostScript.
+\usepackage{epstopdf}
+
+% Package for float settings of the embedded objects.
+\usepackage{float}
+
+%% Listings %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{listings}
+
+% Define Colors
+\usepackage{color}
+\definecolor{darkGrey}{RGB}{100,100,100}
+\definecolor{lightGrey}{RGB}{150,150,150}
+
+% Set Language
+\lstset{
+	inputencoding=utf8,
+	basicstyle=\small\ttfamily, % Global Code Style
+	aboveskip=1em, % Space required above the listing
+	belowskip=1em, % Space required below the listing
+	captionpos=t, % Position of the Caption (t for top, b for bottom)
+	belowcaptionskip=1em, % Space required below the Caption of the listing
+	extendedchars=true, % Allows 256 instead of 128 ASCII characters
+	tabsize=4, % number of spaces indented when discovering a tab 
+	columns=flexible, % characters do not have to be equal-sized
+	keepspaces=true, % does not ignore spaces to fit width, convert tabs to spaces
+	showstringspaces=false, % lets spaces in strings appear as real spaces
+	breaklines=true, % wrap lines if they don't fit
+	frame=tb, % draw a frame at the top and bottom of the listing
+	numbers=left, % show line numbers at the left
+	numberstyle=\tiny\ttfamily, % style of the line numbers
+	commentstyle=\color{lightGrey}, % style of comments
+	keywordstyle=\bfseries\color{darkGrey}, % style of keywords
+	extendedchars=true, % supports Czech unicode characters
+	literate=% defines the list of Czech unicode characters
+	{á}{{\'a}}1    {Á}{{\'A}}1
+	{č}{{\v{c}}}1  {Č}{{\v{C}}}1
+	{ď}{{\v{d}}}1  {Ď}{{\v{D}}}1
+	{é}{{\'e}}1    {É}{{\'E}}1
+	{ě}{{\v{e}}}1  {Ě}{{\v{E}}}1
+	{í}{{\'i}}1    {Í}{{\'I}}1
+	{ň}{{\v{n}}}1  {Ň}{{\v{N}}}1
+	{ó}{{\'o}}1    {Ó}{{\'O}}1
+	{ř}{{\v{r}}}1  {Ř}{{\v{R}}}1
+	{š}{{\v{s}}}1  {Š}{{\v{S}}}1
+	{ť}{{\v{t}}}1  {Ť}{{\v{T}}}1
+	{ú}{{\'u}}1    {Ú}{{\'U}}1
+	{ů}{{\r{u}}}1  {Ů}{{\r{U}}}1
+	{ý}{{\'y}}1    {Ý}{{\'Y}}1
+	{ž}{{\v{z}}}1  {Ž}{{\v{Z}}}1
+}
+
+%% AMS packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Mathematical facilities for LaTeX.
+\usepackage{amsmath}
+
+% Typesetting theorems (AMS style).
+\usepackage{amsthm}
+
+% Extended symbol collection.
+\usepackage{amssymb}
+
+% TeX fonts from the American Mathematical Society.
+\usepackage{amsfonts}
+
+%% Micellaneous %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Make PDF files searchable and copyable.
+\usepackage{cmap}
+
+% Verbatim with URL-sensitive line breaks.
+\usepackage{url}
+
+% Extensive support for hypertext in LaTeX.
+\usepackage[unicode]{hyperref}
+\hypersetup{pdftitle=Mining Parallel Corpora from the Web}
+\hypersetup{pdfauthor=Jakub Kúdela}
+
+% Package controlling hyphenation.
+\usepackage[htt]{hyphenat}
+
+% Package controlling enumerate environment.
+\usepackage{enumitem}
+
+% Package controlling hlines in tables.
+\usepackage{hhline}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Command & Environment Definitions                                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Starts a unnumbered chapter included in the TOC.
+\newcommand{\chapwithtoc}[1]{
+	\chapter*{#1}
+	\addcontentsline{toc}{chapter}{#1}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Document                                                                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+% Select English as the default language.
+\selectlanguage{english}
+\nonfrenchspacing
+
+%% Top Matter %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Standard title page
+%\title{Mining Parallel Corpora from the Web}
+%\author{Jakub Kúdela}
+%\maketitle
+
+% Custom title page 
+\include{01-title-page}
+
+%% Body %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Page numbering off
+\pagenumbering{gobble}
+
+\include{02-acknowledgement}
+\include{03-declaration}
+\include{04-abstract-en}
+\include{05-abstract-sk}
+
+\include{05-toc}
+
+% Page numbering on
+\pagenumbering{arabic}
+
+\include{09-introduction}
+\include{10-ch1-chapter-1}
+\include{20-ch2-chapter-2}
+\include{30-ch3-chapter-3}
+\include{40-ch4-chapter-4}
+\include{50-ch5-chapter-5}
+\include{60-conclusions}
+
+\include{90-bibliography}
+\include{91-list-of-figures}
+\include{92-list-of-tables}
+
+%% Appendices %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\appendix
+
+\include{93-appendixa-cd-rom-contents}
+
+\end{document}

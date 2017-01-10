@@ -1,0 +1,42 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MASTER'S THESIS                                                            %%
+%%                                                                            %% 
+%% Title (en): Mining Parallel Corpora from the Web                           %%
+%% Title (sk): Rafinácia paralelných korpusov z webu                          %%
+%%                                                                            %%
+%% Author: Bc. Jakub Kúdela                                                   %%
+%% Supervisor: Doc. RNDr. Irena Holubová, Ph.D.                               %%
+%% Consultant: RNDr. Ondřej Bojar, Ph.D.                                      %%
+%%                                                                            %%
+%% Academic year: 2015/2016                                                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapwithtoc{Conclusions and Future Work}
+
+The main objectives of our thesis were to propose a new method for bilingual document alignment, applicable in the field of mining parallel data from the web, and to conduct experiments with the method, presenting its capabilities and effectiveness. The method is partially inspired by the related work, but it is based on a different approach.
+
+The majority of the known methods search for pairs of parallel web pages by the similarity of their HTML structures. They also rely on HTML structures when aligning contents of web pages already identified as parallel. In contrast to these methods, our method does not depend on any kind of page structure comparison at all. 
+
+The proposed method is supervised and generic in nature. First, it needs to be trained using a provided sentence-aligned parallel corpus for a given language pair. When trained, the method solves the task of bilingual document alignment---given a set of documents in the two languages, it finds the pairs of parallel ones. With the method applied to the task of mining parallel corpora from the web, we are able to effectively identify the pairs of parallel segments (i.e.\ paragraphs) located anywhere on the pages of a web domain, regardless of their structure. 
+
+The most important step of our method is based on the combination of recent ideas, namely the bilingual extension of word2vec---bivec---and the locality-sensitive hashing (LSH). The method uses bivec to learn vectors for the words in both languages from a provided training parallel corpus. The word vectors are used to calculate the aggregate vectors for the documents to be aligned. These document vectors belong to a common vector space, where pairs of parallel documents tend to have similar vectors. To effectively search the space of document vectors for parallel document candidates, we use Annoy---an implementation of the approximate-nearest-neighbours search based on SimHash, one of the LSH algorithms. In order to decide whether to accept a pair of document and its candidate as parallel or not, a binary classifier is trained using the provided training parallel corpus. The classifier model is based on a neural network, and it uses a set of defined features for the classification.
+
+\section*{Results}
+
+To verify the idea of our method, we have performed two experiments focused on the Czech--English language pair. The first one uses prealigned data, and its results are evaluated automatically. It simulates a scenario with $147$ web domains, each of them containing approximately $50,000$ Czech and $50,000$ English paragraphs to be aligned. In the experiment, the ideal solution consists of an alignment for each paragraph. The results of the experiment are $63.28\%$ recall at $94.32\%$ precision. In an extension of the experiment, we have observed that including lemmatization into the standard preprocessing (tokenization and lowercasing) of both the training and input data does not improve the quality of the resulting alignments notably.
+
+The second experiment involves the real-world data provided by the Common Crawl Foundation. It demonstrates an application of our method to mining parallel corpora from a hundreds of terabytes (TB) large set of web-crawled data. We have managed to extract the Czech--English parallel corpus from a 149 TB large dataset consisting of 1.84 billions of web pages. By implementing and running two MapReduce jobs, we were able to identify $8,750$ web domains having detectable amount of Czech--English bilingual content, and we have managed to extract $801,116$ Czech and $5,931,091$ English paragraphs from these domains. The extracted paragraphs were aligned with our method, creating a paragraph-aligned parallel corpus containing $114,771$ pairs from $2,178$ domains, having in total $7,235,908$ Czech and $8,369,870$ English tokens. The quality of the acquired corpus has been evaluated manually on a set of $500$ randomly selected pairs. The precision was estimated to be $94,60\%$. To evaluate the recall, we have selected one web domain (\texttt{www.csa.cz}) with a smaller number of paragraphs present in the input dataset. The results for the domain were estimated to be $95.45\%$ recall at $97.67\%$ precision.
+
+We were surprised by the size of the corpus created in the second experiment, as we have expected to extract larger quantities of parallel paragraphs. However, we are convinced that the size is not affected that much by inferior recall of our approach, but the fact that the dataset does not contain many Czech--English web pages. The size of the corpus is comparable with the amount of Czech--English parallel data acquired by the previous project, focused on mining the Common Crawl datasets described in the related work~\cite{Smith13}. Additionally, our approach achieves a higher precision. 
+
+The datasets produced by Common Crawl usually contain only a small subset of all the pages available on a web domain at the crawling time. Therefore, the approach described in the second experiment could be extended. We could use the list of web domains with identified Czech--English content to run our own targeted crawling that would navigate through the pages in more depth.
+
+\section*{Future Work}
+
+Both experiments show satisfactory results, implying that the proposed method is a promising baseline for acquiring parallel corpora from the web. Nevertheless, there is still some room for improvement.
+First of all, our method does not consider word order in the aligning process at any stage. Both the scoring function and the features designed for the classification could be extended to take this aspect into account.
+
+Then there is the asymmetric nature of our method, meaning it generates different results if the source and the target languages are swapped. It could be extended to run the alignment for both directions and the results could be symmetrized. This might help the method achieve an even higher precision.
+
+Finally, we have run our method only in a single-node environment so far. This is largely because we were aligning a relatively small sets of documents (not more than $15,000,000$).
+However, the method is designed to run in distributed fashion. Bins with input documents represent independent isolable tasks. Once the method is trained, these tasks could be distributed across multiple cluster nodes together with the resources needed for the aligning process. This would increase the throughput of our method and hence decrease the execution time.

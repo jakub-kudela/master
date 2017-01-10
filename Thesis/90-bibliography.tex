@@ -1,0 +1,611 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MASTER'S THESIS                                                            %%
+%%                                                                            %% 
+%% Title (en): Mining Parallel Corpora from the Web                           %%
+%% Title (sk): Rafinácia paralelných korpusov z webu                          %%
+%%                                                                            %%
+%% Author: Bc. Jakub Kúdela                                                   %%
+%% Supervisor: Doc. RNDr. Irena Holubová, Ph.D.                               %%
+%% Consultant: RNDr. Ondřej Bojar, Ph.D.                                      %%
+%%                                                                            %%
+%% Academic year: 2015/2016                                                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\addcontentsline{toc}{chapter}{Bibliography}
+\begin{thebibliography}{99}
+
+% Book
+\bibitem{Koehn09}
+Philipp Koehn
+\textit{Statistical Machine Translation},
+Cambridge University Press, 2009
+
+% Conference paper
+\bibitem{Tiedemann12}
+Jörg Tiedemann,
+'Parallel Data, Tools and Interfaces in OPUS'
+in \textit{Proceedings of the 8\textsuperscript{th} International Conference on Language Resources and Evaluation (LREC'12)},
+pages 2214--2218,
+European Language Resources Association (ELRA), 2012 
+
+% Journal article
+\bibitem{Mikolov13a}
+Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean
+'Efficient Estimation of Word Representations in Vector Space'
+in \textit{In Proceedings of Workshop at ICLR},
+2013,
+\url{http://arxiv.org/abs/1301.3781} (accessed April 6, 2016)
+
+% Journal article
+\bibitem{Mikolov13b}
+Tomas Mikolov, Quoc V. Le, Ilya Sutskever
+'Exploiting Similarities among Languages for Machine Translation'
+in \textit{Computing Research Repository, arXiv},
+2013,
+\url{http://arxiv.org/abs/1309.4168} (accessed April 6, 2016)
+
+% Journal article
+\bibitem{Mikolov13c}
+Tomas Mikolov, Ilya Sutskever, Kai Chen, Greg Corrado, Jeffrey Dean
+'Distributed Representations of Words and Phrases and their Compositionality'
+in \textit{Computing Research Repository, arXiv},
+2013,
+\url{http://arxiv.org/abs/1310.4546} (accessed April 6, 2016)
+
+% Journal article
+\bibitem{Charikar02}
+Moses S. Charikar
+'Similarity estimation techniques from rounding algorithms'
+in \textit{Proceedings of the 34\textsuperscript{th} Annual ACM Symposium on Theory of Computing},
+pages 380--388,
+ACM New York, NY, USA,
+2002
+
+% Journal article
+\bibitem{Andoni08}
+Alexandr Andoni, Piotr Indyk
+'Near-optimal hashing algorithms for approximate nearest neighbor in high dimensions'
+in \textit{Near-optimal Hashing Algorithms for Approximate Nearest Neighbor in High Dimensions},
+pages 117--122,
+ACM New York, NY, USA,
+2002
+
+% Journal article
+\bibitem{Tiedemann11}
+Jörg Tiedemann,
+'Bitext alignment'
+in \textit{Synthesis Lectures on Human Language Technologies},
+pages 1--165,
+Morgan \& Claypool Publishers, 2011
+
+% Book
+\bibitem{Bojar12_1}
+Ondřej Bojar
+'Čeština a strojový překlad: Strojový překlad našincům, našinci strojovému překladu',
+Institute of Formal and Applied Linguistics, 
+Charles University in Prague, Czech Republic, 
+Faculty of Mathematics and Physics,
+2015
+
+% Conference paper
+\bibitem{Bojar12_2}
+Ondřej Bojar, Zdeněk Žabokrtský, Ondřej Dušek, Petra Galuščáková, Martin Majliš, David Mareček, Jiří Maršík, Michal Novák, Martin Popel, Aleš Tamchyna
+'The joy of parallelism with CzEng 1.0'
+in \textit{Proceedings of the 8\textsuperscript{th} International Conference on Language Resources and Evaluation (LREC'12)},
+European Language Resources Association (ELRA), 2012
+
+% Conference paper
+\bibitem{CommonCrawl}
+Common Crawl Foundation
+'Common Crawl'
+\url{http://commoncrawl.org/} (accessed March 19, 2016)
+
+% Journal article
+\bibitem{EsplaGomis09}
+Miquel Esplà-Gomis, Mikel L. Forcada
+'Bitextor, a free/open-source software to harvest translation memories from multilingual websites'
+in \textit{Proceedings of the workshop {B}eyond {T}ranslation {M}emories: New Tools for Translators {MT}},
+Association for Machine Translation in the Americas, 2009
+
+% Journal article
+\bibitem{EsplaGomis10}
+Miquel Esplà-Gomis, Mikel L. Forcada
+'Combining Content-Based and URL-Based Heuristics to Harvest Aligned Bitexts from Multilingual Sites with Bitextor'
+in \textit{The Prague Bulletin of Mathematical Linguistics},
+volume 93,
+pages 77--86,
+2010
+
+% Web resource
+\bibitem{HTML}
+Ian Hickson, Robin Berjon, Steve Faulkner, Travis Leithead, Erika Doyle Navara, Edward O'Connor, Silvia Pfeiffer
+'HTML5 -- A vocabulary and associated APIs for HTML and XHTML',
+October 2014,
+\url{http://www.w3.org/TR/2014/REC-html5-20141028/} (accessed March 27, 2016)
+
+% Web resource
+\bibitem{XML}
+Tim Bray, Jean Paoli, C. M. Sperberg-McQueen, Eve Maler, François Yergeau
+'Extensible Markup Language (XML) 1.0 (5\textsuperscript{th} Edition)', 
+November 2008,
+\url{https://www.w3.org/TR/2006/REC-xml-20060816/} (accessed March 27, 2016)
+
+% Web resource
+\bibitem{TMX}
+Yves Savourel
+'TMX 1.4b Specification',
+June 2011,
+\url{https://www.gala-global.org/tmx-14b} (accessed March 27, 2016)
+
+% Web resource
+\bibitem{XHTML}
+Steven Pemberton et. al.
+'XHTML\textsuperscript{TM} 1.0 The Extensible HyperText Markup Language (2\textsuperscript{nd} Edition)'
+January 2000,
+\url{https://www.w3.org/TR/2002/REC-xhtml1-20020801} (accessed March 27, 2016)
+
+% Journal article
+\bibitem{Lui12}
+Marco Lui, 	Timothy Baldwin
+'langid.py: an off-the-shelf language identification tool'
+in \textit{Proceedings of the ACL 2012 System Demonstrations},
+pages 25--30,
+2012
+
+% Journal article
+\bibitem{Brown93}
+Peter F. Brown, Vincent J. Della Pietra, Stephen A. Della Pietra, Robert L. Mercer
+'The mathematics of statistical machine translation: parameter estimation'
+in \textit{Computational Linguistics - Special issue on using large corpora: II},
+volume 19, issue 2, June 1993 
+pages 263--311,
+MIT Press Cambridge, MA, USA, 1993
+
+% Journal article
+\bibitem{Varga05}
+Dániel Varga, László Németh, Péter Halácsy, András Kornai, Viktor Trón, Viktor Nagy
+'Parallel corpora for medium density languages'
+in \textit{In Proceedings of the RANLP 2005},
+pages 590--596,
+2005
+
+% Journal article
+\bibitem{Gale93}
+William A. Gale, Kenneth W. Church
+'A program for aligning sentences in bilingual corpora'
+in \textit{Computational Linguistics - Special issue on using large corpora: I},
+volume 19, issue 1, March 1993,
+pages 75--102,
+MIT Press Cambridge, MA, USA, 1993
+
+% Journal article
+\bibitem{Vincente12}
+Iñaki San Vicente, Iker Manterola
+'PaCo2: A Fully Automated tool for gathering Parallel Corpora from the Web'
+in \textit{Proceedings of the 8\textsuperscript{th} International Conference on Language Resources and Evaluation (LREC'12)},
+European Language Resources Association (ELRA), 2012
+
+% Journal article
+\bibitem{Resnik03}
+Philip Resnik, Noah A. Smith
+'The Web as a parallel corpus'
+in \textit{Computational Linguistics - Special issue on web as corpus},
+volume 29, issue 3, September 2003,
+pages 349--380,
+MIT Press Cambridge, MA, USA, 2003
+
+% Journal article
+\bibitem{Nadeau04}
+David Nadeau, George Foster
+'Real-time identification of parallel texts from bilingual newsfeed'
+in \textit{CLINE 2004, Computational Linguistics in the North East},
+2004
+
+% Journal article
+\bibitem{Ratcliff88}
+John W. Ratcliff, David Metzener
+'Pattern Matching: The Gestalt Approach'
+in \textit{Dr. Dobb's Journal},
+volume 7,
+page 46,
+1988
+
+% Journal article
+\bibitem{Resnik99}
+Philip Resnik
+'Mining the Web for Bilingual Text'
+in \textit{Proceedings of the 37\textsuperscript{th} annual meeting of the Association for Computational Linguistics (ACL)},
+pages 527--534,
+University of Maryland, College Park, Maryland, 1999
+
+% Journal article
+\bibitem{Resnik98}
+Philip Resnik
+'Parallel Strands: A Preliminary Investigation into Mining the Web for Bilingual Text',
+in \textit{In 3\textsuperscript{rd} Conference of the Association for Machine Translation in the Americas},
+pages 72--82,
+Springer, 
+1998
+
+% Journal article
+\bibitem{Hunt75}
+James W. Hunt, Malcolm D. McIlroy
+'An Algorithm for Differential File Comparison'
+in \textit{Technical Memorandum 75-1271-11},
+Bell Laboratories, 
+1975
+
+% Journal article
+\bibitem{Pearson95}
+Karl Pearson
+'Notes on regression and inheritance in the case of two parents'
+in \textit{Proceedings of the Royal Society of London},
+volume 58,
+pages 240--242,
+1895
+
+% Journal article
+\bibitem{Wolk14}
+Krzysztof Wołk, Krzysztof Marasek
+'Building subject-aligned comparable corpora and mining it for truly parallel sentence pairs'
+in \textit{Procedia Technology},
+volume 18,
+pages 126--132,
+International workshop on Innovations in Information and Communication Science and Technology (IICST),
+2014
+
+% Journal article
+\bibitem{Miller95}
+George A. Miller
+'WordNet: A Lexical Database for English'
+in \textit{Communications of the ACM},
+volume 38,
+pages 39--41,
+1995
+
+% Journal article
+\bibitem{Fellbaum98}
+Christiane Fellbaum
+'WordNet: An Electronic Lexical Database',
+MIT Press, 
+1998
+
+% Journal article
+\bibitem{Loper02}
+Edward Loper, Steven Bird
+'NLTK: The Natural Language Toolkit'
+in \textit{Proceedings of the ACL 2012 Workshop on Effective Tools and Methodologies for Teaching Natural Language Processing and Computational Linguistics},
+volume 1,
+pages 63--70,
+2002
+
+% Journal article
+\bibitem{Koehn07}
+Philipp Koehn, Hieu Hoang, Alexandra Birch, Chris Callison-Burch, Marcello Federico, Nicola Bertoldi, Brooke Cowan, Wade Shen, Christine Moran, Richard Zens, Chris Dyer, Ondřej Bojar, Alexandra Constantin, Evan Herbst	
+'Moses: open source toolkit for statistical machine translation'
+in \textit{Proceedings of the ACL 2012 Workshop on Effective Tools and Methodologies for Teaching Natural Language Processing and Computational Linguistics},
+volume 1,
+pages 63--70,
+2002
+
+% Web resource
+\bibitem{Moses}
+Philipp Koehn
+'MOSES User Manual and Code Guide'
+2016,
+\url{http://www.statmt.org/moses/manual/manual.pdf} (accessed April 5, 2016)
+
+% Journal article
+\bibitem{Smith13}
+Jason R. Smith, Herve Saint-Amand, Magdalena Plamada, Philipp Koehn, Chris Callison-Burch, Adam Lopez
+'Dirt Cheap Web-Scale Parallel Text from the Common Crawl'
+in \textit{Proceedings of the 37\textsuperscript{th} annual meeting of the Association for Computational Linguistics (ACL) on Interactive Poster and Demonstration Sessions},
+Pages 177--180 ,
+Association for Computational Linguistics,
+2007
+
+% Journal article
+\bibitem{Dean04}
+Jeffrey Dean, Sanjay Ghemawat
+'MapReduce: simplified data processing on large clusters'
+in \textit{Proceedings of the 6\textsuperscript{th} Conference on Symposium on Opearting Systems Design \& Implementation}
+volume 6,
+pages 137--149,
+USENIX Association,
+2004
+
+% Journal article
+\bibitem{Burch11}
+Chris Callison-Burch, Philipp Koehn, Christof Monz, Omar F. Zaidan
+'Findings of the 2011 workshop on statistical machine translation'
+in \textit{Proceedings of the 6\textsuperscript{th} Workshop on Statistical Machine Translation},
+pages 22--64,
+Association for Computational Linguistics,
+2011
+
+% Book
+\bibitem{Holubova15}
+Holubová Irena, Kosek Jiří, Minařík Karel, Novák David
+'Big Data a NoSQL databáze',
+Grada Publishing, a.s., 
+2015
+
+% Conference paper
+\bibitem{Strakova14}
+Straková Jana, Straka Milan and Hajič Jan
+'Open-Source Tools for Morphology, Lemmatization, POS Tagging and Named Entity Recognition'
+in \textit{Proceedings of 52\textsuperscript{nd} Annual Meeting of the Association for Computational Linguistics: System Demonstrations},
+pages 13--18,
+Association for Computational Linguistics,
+2014
+
+% Conference paper
+\bibitem{Spoustova09}
+Drahomíra Spoustová, Jan Hajič, Jan Raab, Miroslav Spousta
+'Semi-Supervised Training for the Averaged Perceptron POS Tagger'
+in \textit{Proceedings of the 12th Conference of the European Chapter of the ACL (EACL 2009)},
+pages 763--771,
+Association for Computational Linguistics,
+2009
+
+% Web resource
+\bibitem{Straka13}
+Straka Milan, Straková Jana
+'Czech Models (MorfFlex CZ + PDT) for MorphoDiTa',
+2013,
+LINDAT/CLARIN digital library at Institute of Formal and Applied Linguistics, Charles University in Prague,
+\url{http://hdl.handle.net/11858/00-097C-0000-0023-68D8-1} (accessed April 7, 2016)
+
+% Web resource
+\bibitem{Straka14}
+Straka Milan, Straková Jana
+'English Models (Morphium + WSJ) for MorphoDiTa',
+LINDAT/CLARIN digital library at Institute of Formal and Applied Linguistics, Charles University in Prague,
+2014,
+\url{http://hdl.handle.net/11858/00-097C-0000-0023-68D9-0} (accessed April 7, 2016)
+
+
+% Conference paper
+\bibitem{Junczys10}
+Marcin Junczys-Dowmunt, Arkadiusz Szał
+'SyMGiza++: A Tool for Parallel Computation of Symmetrized Word Alignment Models'
+in \textit{Proceedings of the 5\textsuperscript{th} International Multiconference on Computer Science and Information Technology},
+pages 397--401,
+2010
+
+% Conference paper
+\bibitem{Vogel96}
+'HMM-based word alignment in statistical translation'
+in \textit{Proceedings of the 16\textsuperscript{th} conference on Computational linguistics - Volume 2},
+pages 836--841,
+Association for Computational Linguistics,
+1996
+
+% Journal article
+\bibitem{Och03}
+Franz Josef Och, Hermann Ney
+'A systematic comparison of various statistical alignment models'
+in \textit{Computational Linguistics},
+volume 29, number 1,
+pages 19--51,
+2003
+
+% Journal article
+\bibitem{Dempster77}
+Arthur P. Dempster, Nan M. Laird, and Donald B. Rubin
+'Maximum Likelihood from Incomplete Data via the EM Algorithm'
+in \textit{Journal of the Royal Statistcial Society},
+series B, volume 39, number 1,
+pages 1--38,
+1977
+
+% Conference paper
+\bibitem{Och99}
+Franz Josef Och
+'An Efficient Method for Determining Bilingual Word Classes'
+in \textit{Proceeding EACL '99 Proceedings of the 9\textsuperscript{th} conference on European chapter of the Association for Computational Linguistics},
+pages 71--76,
+Association for Computational Linguistics,
+1999
+
+% Conference paper
+\bibitem{Gao08}
+Qin Gao, Stephan Vogel
+'Parallel implementations of word alignment tool'
+in \textit{SETQA-NLP '08 Software Engineering, Testing, and Quality Assurance for Natural Language Processing}
+pages 49--57,
+2008
+
+% Conference paper
+\bibitem{Dyer13}
+Chris Dyer, Victor Chahuneau and Noah A. Smith
+'A simple, fast, and effective reparameterization of IBM model 2'
+in \textit{Proceedings of NAACL-HLT 2013},
+pages 644--648,
+2013
+
+% Journal article
+\bibitem{Luong15}
+Minh-Thang Luong, Hieu Pham, and Christopher D. Manning
+'Bilingual Word Representations with Monolingual Quality in Mind'
+in \textit{Proceedings of the 1\textsuperscript{st} Workshop on Vector Space Modeling	for Natural Language Processing},
+pages 151-–159,
+2015
+
+% Journal article
+\bibitem{Rong14}
+Xin Rong
+'word2vec Parameter Learning Explained'
+in \textit{Computing Research Repository, arXiv}
+2014,
+\url{http://arxiv.org/abs/1411.2738} (accessed April 6, 2016)
+
+% Journal article
+\bibitem{Pennigton14}
+Jeffrey Pennington, Richard Socher, Christopher D. Manning
+'GloVe: Global Vectors for Word Representation'
+in \textit{Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP)},
+pages 1532--1543,
+Association for Computational Linguistics,
+2014
+
+% Jornal article
+\bibitem{Gouws14}
+Stephan Gouws, Yoshua Bengio, Greg Corrado
+'BilBOWA: Fast Bilingual Distributed Representations without Word Alignments'
+in \textit{Computing Research Repository, arXiv}
+2014,
+\url{http://arxiv.org/abs/1410.2455} (accessed April 7, 2016)
+
+% Web resource
+\bibitem{annoy}
+Erik Bernhardsson et al.
+'Annoy: Approximate Nearest Neighbors in C++/Python',
+2016,
+\url{https://github.com/spotify/annoy} (accessed April 11, 2016)
+
+% Web resource
+\bibitem{Bernhardsson16}
+Erik Bernhardsson et al.
+'Benchmarks of approximate nearest neighbor libraries in Python',
+2016,
+\url{https://github.com/erikbern/ann-benchmarks} (accessed April 11, 2016)
+
+% Journal article
+\bibitem{Schaul10}
+Tom Schaul, Justin Bayer, Daan Wierstra, Yi Sun, Martin Felder, Frank Sehnke, Thomas Rückstieß, Jürgen Schmidhuber
+'PyBrain'
+in \textit{The Journal of Machine Learning Research},
+volume 11,
+pages 743--746,
+2010
+
+% Book
+\bibitem{Sima96}
+Jiri Sima, Roman Neruda
+'Theoretical Issues of Neural Networks',
+MatfyzPress, Prague, 
+1996
+
+% Journal article
+\bibitem{Rumelhart86}
+David E. Rumelhart, Geoffrey E. Hinton, Ronald J.Williams
+'Learning internal representations by error propagation',
+in \textit{Parallel distributed processing: explorations in the microstructure of cognition},
+volume 1,
+pages 348--362,
+MIT Press, Cambridge MA,
+1986
+
+% Web resource
+\bibitem{WARC}
+'ISO 28500:2009 - Information and documentation -- WARC file format',
+International Organization for Standardization, Geneva, Switzerland.
+2009,
+\url{http://www.iso.org/iso/catalogue_detail.htm?csnumber=44717} (accessed April 8, 2016)
+
+% Web resource
+\bibitem{JSON}
+Timothy W. Bray
+'The JavaScript Object Notation (JSON) Data Interchange Format',
+March 2014,
+\url{https://tools.ietf.org/html/rfc7159} (accessed April 18, 2016)
+
+% Book
+\bibitem{White15}
+Tom White
+'Hadoop: The Definitive Guide, 4\textsuperscript{th} Edition',
+O'Reilly Media,
+2015
+
+% Book
+\bibitem{Gosling14}
+James Gosling, Bill Joy, Guy L. Steele, Gilad Bracha, Alex Buckley
+'The Java Language Specification, Java SE 8 Edition',
+Addison-Wesley Professional,
+2014
+
+% Book
+\bibitem{Lindholm14}
+Tim Lindholm, Frank Yellin, Gilad Bracha, Alex Buckley
+'The Java Virtual Machine Specification, Java SE 8 Edition',
+Addison-Wesley Professional,
+2014
+
+% Journal article
+\bibitem{Ghemawat03}
+Sanjay Ghemawat, Howard Gobioff, Shun-Tak Leung
+'The Google File System'
+in \textit{Proceedings of the 19\textsuperscript{th} ACM Symposium on Operating Systems Principles},
+pages 29--43,
+ACM New York, NY, USA,
+2003,
+
+% Journal article
+\bibitem{Shvachko10}
+Konstantin Shvachko, Hairong Kuang, Sanjay Radia, Robert Chansler
+'The Hadoop Distributed File System'
+in \textit{Proceedings of the 2010 IEEE 26\textsuperscript{th} Symposium on Mass Storage Systems and Technologies (MSST)},
+pages 1--10,
+2010,
+IEEE Computer Society
+
+% Web resource
+\bibitem{hdfs_architecture}
+Apache Software Foundation
+'HDFS Architecture',
+2016
+\url{https://hadoop.apache.org/docs/r2.7.2/hadoop-project-dist/hadoop-hdfs/HdfsDesign.html} (accessed April 18, 2016),
+
+% Web resource
+\bibitem{mapreduce_tutorial}
+Apache Software Foundation
+'MapReduce Tutorial',
+2016
+\url{https://hadoop.apache.org/docs/r2.7.2/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html} (accessed April 22, 2016),
+
+% Web resource
+\bibitem{warc-hadoop}
+Martin Kleppmann
+'warc-hadoop: WARC Input and Output Formats for Hadoop',
+2014,
+\url{https://github.com/ept/warc-hadoop} (accessed April 10, 2016),
+
+% Web resource
+\bibitem{jsoup}
+Jonathan Hedley et al.
+'jsoup: Java HTML parser',
+2015,
+\url{https://jsoup.org/} (accessed April 10, 2016),
+
+% Web resource
+\bibitem{DOM}
+Anne van Kesteren, Aryeh Gregor, Ms2ger, Alex Russell, Robin Berjon
+'W3C DOM4', 
+November 2015,
+\url{https://www.w3.org/TR/2015/REC-dom-20151119/} (accessed April 10, 2016)
+
+% Web resource
+\bibitem{language-detector}
+Fabian Kessler et al.
+'language-detector: Language Detection Library for Java',
+\url{https://github.com/optimaize/language-detector} (accessed April 10, 2016)
+
+% Journal article
+\bibitem{Cavnar94}
+William B. Cavnar , John M. Trenkle
+'N-Gram-Based Text Categorization'
+in \textit{In Proceedings of SDAIR-94, 3\textsuperscript{rd} Annual Symposium on Document Analysis and Information Retrieval},
+161--175,
+1994
+
+% Journal article
+\bibitem{Pedregosa11}
+Fabian Pedregosa, Gaël Varoquaux, Alexandre Gramfort, Vincent Michel, Bertrand Thirion, Olivier Grisel, Mathieu Blondel, Peter Prettenhofer, Ron Weiss, Vincent Dubourg, Jake Vanderplas, Alexandre Passos, David Cournapeau, Matthieu Brucher, Matthieu Perrot, Édouard Duchesnay
+'Scikit-learn: Machine learning in Python'
+in \textit{The Journal of Machine Learning Research},
+volume 12,
+pages 2825--2830,
+2011
+
+\end{thebibliography}

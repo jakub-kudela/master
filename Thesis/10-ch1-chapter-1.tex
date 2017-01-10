@@ -1,0 +1,298 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% MASTER'S THESIS                                                            %%
+%%                                                                            %% 
+%% Title (en): Mining Parallel Corpora from the Web                           %%
+%% Title (sk): Rafinácia paralelných korpusov z webu                          %%
+%%                                                                            %%
+%% Author: Bc. Jakub Kúdela                                                   %%
+%% Supervisor: Doc. RNDr. Irena Holubová, Ph.D.                               %%
+%% Consultant: RNDr. Ondřej Bojar, Ph.D.                                      %%
+%%                                                                            %%
+%% Academic year: 2015/2016                                                   %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Related Work}
+\label{chapter:related_work}
+
+This chapter describes methods that are the closest to ours. All approaches mentioned in the following text have one thing in common---their goal is to harvest parallel corpora from the web.
+
+\section{Bitextor}
+\label{section:bitextor}
+
+Bitextor\footnote{\url{https://sourceforge.net/projects/bitextor/} (accessed March 20, 2016)}~\cite{EsplaGomis09}\cite{EsplaGomis10} is a well maintained free and open-source bitext generator which obtains its base corpora from the Internet. First, it downloads an entire website, keeping only the files in the plain text, HyperText Markup Language (HTML)~\cite{HTML} or Extensible Markup Language (XML)~\cite{XML} format. Then the system detects the language of each file and applies a group of heuristics to find possible candidate pairs of files which can have the same content. These heuristics include for example file size comparison, HTML tag structure edit distance, and text blocks length difference. Once it has identified the candidate pairs of files, it generates a bitext output in the Translation Memory eXchange (TMX)~\cite{TMX} format. 
+
+Since the first release of Bitextor, the system has evolved and has been extended with features like heuristics based on Uniform Resource Locator (URL) and utilization of dictionaries with the bag-of-words model to help the candidate filtering process. The following text describes the current state of the core pipeline of Bitextor according to the standard workflow.
+
+\subsection{Bitextor: Procedure}
+\label{subsection:bitextor_procedure}
+
+\begin{enumerate}
+	\item Bitextor downloads all text/HTML/XML files from a website provided by seed URLs, while keeping their folder structure. For this purpose it internally uses a crawler called HTTrack\footnote{\url{http://www.httrack.com/} (accessed March 20, 2016)}.
+	
+	\item It extracts encoding, MIME type and Base64-encoded content of each downloaded file. The library called boilerpipe\footnote{\url{https://github.com/misja/python-boilerpipe} (accessed March 20, 2016)} helps to remove menus and other unwanted parts from the HTML files. Then the tool Apache-Tika\footnote{\url{http://tika.apache.org/} (accessed March 20, 2016)} is used to repair the structure of the HTML files, obtaining XHTML~\cite{XHTML} files. This step also normalizes encoding of the files into uniform UTF-8.
+	
+	\item The system identifies the language of the files. This step is done using langid.py\footnote{\url{https://pypi.python.org/pypi/langid} (accessed March 20, 2016)}~\cite{Lui12}, which is a standalone language identification tool pre-trained for a large number of languages.
+
+	\item A so-called \textit{raspa} representation is created for every HTML file. In order to create such a representation every text block is replaced by the sequence of apostrophes, of length $\log_2(\operatorname{len}(\operatorname{text}))$, where $\operatorname{len}(\operatorname{text})$ is the length (in characters) of the given text block. This means that the representation preserves the HTML tags in-place, only the text blocks are changed. These raspa representations will later help the system to calculate the \textit{fuzzy-matching score} used to rank the parallel file candidates.
+	
+	\item The next step uses the bag-of-words from each file and a provided dictionary to compute an overlapping score between the files in both languages. For each file in one language, it creates a list of ten highest scoring candidates in the other language. The default dictionary contains English, Spanish, Catalan, Croatian, and Basque languages.
+	
+	However, the system provides a script for creating a custom dictionary. This script gets a sentence-aligned bilingual corpus in the languages we want to consider, lowercases it, and filters out overly long sentences. Then it runs GIZA++\footnote{\url{http://www.statmt.org/moses/giza/GIZA++.html} (accessed March 20, 2016)}, a word-alignment tool that implements the series of IBM Models introduced by Brown et al.~\cite{Brown93}. Bitextor lets GIZA++ dump parameters of the trained statistical models for both directions (one language as the source and the other as the target, and vice versa). Finally, each word pair appearing in both directions and having the value of harmonic mean of parameters great enough is included into the dictionary.
+	
+	\item With the candidate lists created, the system recalculates the scores provided by the previous step. It multiplies the score of each candidate by the fuzzy-matching score between the raspa representations of the file and the candidate. The fuzzy-matching score compares two raspa sequences on the basis of Levenshtein's edit distance. To calculate the edit distance the system internally uses the python-Levenshtein\footnote{\url{https://pypi.python.org/pypi/python-Levenshtein/} (accessed March 20, 2016)} library.
+	
+	\item Bitextor allows to create the candidate lists in both directions (one language as the source and the other as the target, and vice versa). In this situation, the score for a file pair is calculated as an average of scores for both directions. If the file pair scores below the threshold in either of the directions it is discarded altogether.
+	
+	\item All aligned files are first concatenated and stored in two new files, one for each language. Concatenation is done in the same order, while using a system-specific separator. The presence of separators ensures that segment alignment will happen only between the aligned files. Then the system runs hunalign\footnote{\url{http://mokk.bme.hu/resources/hunalign/} (accessed March 20, 2016)}~\cite{Varga05} to get the segment alignment. In the first pass, it uses Gale-Church~\cite{Gale93} sentence-length algorithm for the alignment. Next, it creates an automatic dictionary from the first alignment. Then it realigns the text in the second pass, using the automatic dictionary.
+	
+	\item After running hunalign, the system removes all unaligned segments and those with a confidence score below a specified threshold. Moreover, the system allows a configuration in which the aligned pairs of segments coming from a pair of files with too many problems are discarded. Finally, with the segments aligned and filtered, Bitextor can, optionally, output them in the TMX format.
+\end{enumerate}
+
+\subsection{Bitextor: Results}
+\label{subsection:bitextor_results}
+
+The system's authors suggest favoring precision over recall. They performed an experiment covering two websites. The system's output was compared against human evaluations. The preliminary results show a great precision of approximately $100\%$ at a reasonable recall of more than $63\%$.
+
+\subsection{Bitextor: Summary}
+\label{subsection:bitextor_summary}
+
+We consider Bitextor as a mature, language independent tool which can handle many typical scenarios when facing the problem of harvesting parallel corpora from multilingual websites. Yet its functionality is based on a premise that parallel texts are stored in files with very similar HTML structure. However, there are many websites which are designed in such way that all the information is available in the primary language, with only a subset translated into secondary languages. As an example, consider a news website where each article is written in the primary language, starting with a summary followed with a body. But each of these articles has a translation available only for the summary part. This means that the page with the article written in the primary language has a different HTML structure than the page containing just the translated summary. They probably differ in the number of paragraph tags, and thus Bitextor would discard such pair due to the difference in both HTML structure and text length. Also, in the case where a single page contains a same piece of text available in both the languages, Bitextor would not find such bitext.
+
+\section{PaCo\textsuperscript{2}}
+\label{section:paco2}
+
+PaCo\textsuperscript{2}~\cite{Vincente12} is a fully automated tool for gathering parallel corpora from the web. Unlike others, it is also focused on identification of potential websites containing bilingual content for chosen languages. Being language independent, it is adaptable to any set of languages. The architecture of PaCo\textsuperscript{2} is designed as a pipeline consisting of three main phases. In the first, phase the web is searched for websites which might contain bilingual textual content. In the second phase, parallel web pages are detected on the sites identified in the previous phase. In the third and final phase, parallel web pages are aligned at the sentence level and a parallel corpus is created. The details of each phase are described in the list below.
+
+\subsection{PaCo\textsuperscript{2}: Procedure}
+\label{subsection:paco2_procedure}
+
+\begin{enumerate}
+	\item PaCo\textsuperscript{2} handles bilingual website detection. This custom capability is a relatively unique feature in the field. It has also been implemented in the previous approaches (e.g. STRAND); however, they were entirely dependent on the AltaVista search engine, which had an application programming interface (API) that allowed to search for multilingual websites. Unfortunately, it is no longer available. 
+	
+	The system uses search engines for identification of potential bilingual websites. As an input, it requires a language pair and a list of fifty or more lemmatized words from the preferably less frequent of the two languages. It then generates queries for the search engine. The queries are triplets from the list of provided words. When querying the search engine, the system uses its API to request the results for the other language. This way, a list containing URLs of candidate websites is created. 
+	
+	\item The preliminary filter is applied to discard a priori unwanted candidates, such as gigantic websites, blog platforms, and social media. Authors have found out that these would bring a very negligible benefit. For each of the URLs left in the filtered list, the system downloads a very small part of the website and searches for elements of parallelism, e.g. hyperlinks with anchor texts or \texttt{alt} attribute texts indicating presence of languages. If the website passes the set of requirements on this smaller scale it is considered as a website with parallel content.
+	
+	\item For each website found in the previous step, the system harvests all of its HTML files using Wget\footnote{\url{https://www.gnu.org/software/wget/} (accessed March 27, 2016)}. In order to compare each pair of the $N$ acquired files, the system would need to perform $N^2$ comparisons in the worst case. However, various heuristics and statistical filters are applied to reduce this number. These include language, file size, and length comparison. The system compares only HTML files written in the exact two languages requested by the user. It also excludes all file pairs outside a certain similarity threshold with regard to the file size and length ratio. Language identification is performed using TextCat\footnote{\url{http://www.let.rug.nl/vannoord/TextCat/} (accessed March 27, 2016)}, and character encoding is standardized to UTF-8 by means of BeautyfulSoup\footnote{\url{http://www.crummy.com/software/BeautifulSoup/} (accessed March 27, 2016)}. 
+	
+	Authors of PaCo\textsuperscript{2} decided to keep boilerplate\footnote{surplus ``clutter'' (templates) around the main textual content of a web page} parts because they consider the menus and other elements such as breadcrumbs to contain useful parallel information. In addition, each content having the same value regardless the language of the text (e.g. copyright notes or contact information) is removed from the results. The bitext detection module runs the following three major filters when searching for parallel files:
+	
+	\begin{enumerate}
+		\item \textit{Link Follower Filter} focuses on the hyperlinks located in HTML structures of the files. For example, let us assume we want to find parallel HTML files for the language pair consisting of Czech and English. If there exists an HTML file pair where the structure of the first file contains a hyperlink to the second file and vice versa, and additionally, if the links contain reasonable anchor texts like ``English'', ``anglicky'' and ``Czech'', ``česky'', the filter considers the pair of files as parallel.
+		
+		\item \textit{URL Pattern Search} draws from the assumption that parallel web pages have usually similar URLs. They often differ only in parts representing language codes. For instance, the following two URLs referencing parallel files differ only in this manner. Czech article contains ``cs'' in its URL, while the English one contains ``en'' instead.
+		
+		\vspace{1em}
+		\footnotesize
+		\texttt{http://www.mff.cuni.cz/to.cs/verejnost/konalo-se/2016-03-cenaprop/}\newline
+		\texttt{http://www.mff.cuni.cz/to.en/verejnost/konalo-se/2016-03-cenaprop/}
+		\normalsize
+		\vspace{1em}
+		
+		To detect such scenarios, for each pair of file, PaCo\textsuperscript{2} first finds and removes the language codes from both URLs. Then it calculates the Longest Common Subsequence Ratio (LCSR). If the ratio reaches a required threshold the system considers the candidates as parallel files.
+		
+		\item \textit{HTML Structure and Content Filter} is useful in all other scenarios not covered by the previous two filters. The system compares HTML tag structure information~\cite{Resnik03} combined with content similarity. PaCo\textsuperscript{2} authors observed that by comparing only the HTML structures of the files the results are poor due to the existence of numerous files with similar HTML structures on an ordinary website. 
+		
+		In order to compare content similarity, the system works with extracted universal entities, e.g. numbers, email addresses and dates. The algorithm for extraction of these language independent entities  has been adapted from the previous work in the field~\cite{Nadeau04}. To compute the content similarity of candidate parallel files, vector representation consisting of extracted entities is prepared for each file. The order of entities corresponds to the order of their appearance in the content. The Ratcliff/Obershelp~\cite{Ratcliff88} pattern recognition algorithm is then used to compare these vectors.
+		
+		To calculate the total score for a given pair of candidate parallel files, their HTML structure similarity and content similarity is calculated. Both results are weighed, and those candidates that reach a certain threshold are regarded as parallel files. If there are multiple candidates that have reached the threshold to be a parallel file with one file, all of them are ruled out.
+	\end{enumerate}
+	
+	\item Sentence alignment is done with the help of the hunalign tool. Then, a series of post processing activities is applied. Translation units (i.e.\ pairs of sentences) are sorted and deduplicated. Units containing solely elements like numbers, email addresses, or URLs are excluded. Language identification is done once again, but this time at the sentence level. Units that do not fit the requested languages are discarded. At the end of the process, if there are more than two unique target texts for the same source text, all units containing this source text are omitted in favor of precision. The output can be either in raw text or in the TMX format.
+\end{enumerate}
+
+\subsection{PaCo\textsuperscript{2}: Results}
+\label{subsection:paco2_results}
+
+PaCo\textsuperscript{2} authors report experiments on these language pairs: Basque--Spanish, Spanish--English and Portuguese--English. In order to identify the bilingual websites, PaCo\textsuperscript{2} utilized the Bing\footnote{\url{http://www.let.rug.nl/vannoord/TextCat/} (accessed March 27, 2016)} search engine. Results show acceptable precision of $97\%$ for the Basque--Spanish language pair. However, the precision levels for the Spanish--English and Portuguese--English pairs were relatively poor, $67\%$ and $78\%$ respectively. Error analysis over the wrong candidates showed the accuracy of the system to be low due to the fact that many of the web pages covered in the experiment contained dynamically variable elements (e.g. tag-clouds).
+
+\subsection{PaCo\textsuperscript{2}: Summary}
+\label{subsection:paco2_summary}
+
+PaCo\textsuperscript{2} is a language independent system. Its unique feature of identification of websites containing parallel data is beneficial. The aligning process is entirely unsupervised, which we also consider a valuable feature. The only a priori knowledge required to run the whole process of parallel data acquisition is a list of fifty or more lemmatized words from one of the two chosen languages. We appreciate the focus on performance, where PaCo\textsuperscript{2} uses a set of heuristics. These identify and handle common scenarios, which leads to faster delivery of results. Unfortunately, like Bitextor, PaCo\textsuperscript{2} cannot handle alignment of parallel data segments located in files with different HTML structure. 
+
+\section{STRAND}
+\label{section:strand}
+
+STRAND~\cite{Resnik03}\cite{Resnik99}\cite{Resnik98} is a system performing structural translation recognition. Its main objective is to identify pairs of parallel web pages. Its design is based on an observation of how parallel content is usually distributed over an ordinary website. The authors suggest that websites have a very strong tendency to present parallel content via pages having a similar HTML structure. The text below describes how the system works.
+
+\subsection{STRAND: Procedure}
+\label{subsection:strand_procedure}
+
+\begin{enumerate}
+	\item At the beginning of the process, STRAND tries to locate websites containing parallel data. For this task, it used to utilize advanced search capabilities of the AltaVista search engine which, unfortunately, is no longer active. The engine helped with searching for two types of web pages:
+
+	\begin{itemize}
+		\item A \textit{parent} page contains hyperlinks to web pages containing different language versions of the same content. An example of such a page is one containing two links to the same article written in English and French. To perform search for such a page, the system queries the engine with an expression \texttt{(anchor:"english" OR anchor:"anglais") AND (anchor:"french" OR anchor:"français")}. Additionally, a distance filter is applied on the obtained results. If the positional distance between the links within the HTML structure is more than $10$ lines, the page is filtered out. Authors believe that parent pages tend to have links pointing to the corresponding pages closely located within their HTML structures.
+		
+		\item A \textit{sibling} page is a type of page in one language that contains a hyperlink to a version of the same page in another language. A page written in French containing an anchor with a label "English", which points to another page with the same content in English, is an example of a sibling page. The system searches for these by querying the engine with an expression like \texttt{(anchor:"english" OR anchor:"anglais")}.
+	\end{itemize}
+	
+	After AltaVista search engine was shut down, authors added another component to the system called \textit{spider}. It can download all the web pages from a provided initial list of websites.
+	
+	\item Generating candidate pairs is simple when a search engine is used to acquire the list of parent and sibling pages. For each parent page, the system takes the two linked pages, and for each sibling page, the system takes the page together with the linked one. 
+	
+	However, when all the pages from a website are under consideration, naturally, the task of generating candidate pairs is more difficult. The spider component contains a URL-matching stage which exploits the fact that parallel pages have usually similar URL structure. The system knows substitution rules which help to detect if a URL of a page in one language can be transformed into a URL of another page in a different language. If so, these two pages are considered as a candidate pair. Web pages that are mutual translations tend to have a very similar ratio of lengths; therefore, the system requires from a candidate pair to have a reasonable value of this ratio, otherwise it is discarded.
+	
+	\item The key element of STRAND is a structural filter. It analyses HTML structure of both pages of a candidate pair and decides whether they are parallel or not. First, the system linearizes the HTML structure while ignoring the textual content of the page. As a result, it generates a linear sequence of tokens for each HTML structure. Such a sequence consist of three types of tokens:
+
+	\vbox{
+	\begin{itemize}
+		\item \texttt{[START:element\_label]};
+		\item \texttt{[END:element\_label]};
+		\item \texttt{[Chunk:text\_length]}.
+	\end{itemize}
+	}
+	
+	First two types of tokens are substitutes for HTML opening and closing elements. The last type of token is a substitute for a non-markup text block. The length is calculated as the number of non-whitespace bytes contained within the block. The attributes of the HTML elements are treated similarly as a non-markup block. For example \texttt{<font color="blue">} would generate a subsequence \texttt{[START:font][Chunk:12]}. These sequences, representing linearized structure of both web pages, are aligned by means of an adapted algorithm~\cite{Hunt75} based on dynamic programming. With alignment done, the system calculates 4 scalar values, which eventually determine whether the candidate pair is parallel or not. These values characterize the quality of the alignment, but also the probability of the candidate pair to be parallel:
+		
+	\begin{itemize}
+		\item \textit{dp} \quad The difference percentage of the non-shared tokens. It represents the ratio of mismatches in the alignment. Mismatches are tokens from one sequence not having a corresponding token in the other sequence and vice versa. The greater ratio indicates that the two web pages have different structure and therefore are less likely parallel. This can also happen when the one page contains the full article while the other contains only the translation of its introduction. The system requires the value to be less than $20\%$.
+		
+		\item \textit{n} \quad The number of aligned non-markup text blocks of unequal length. The aligning algorithm maximizes the number of matches of the identical tokens which represent markup. As a side effect, it also pairs the tokens of the corresponding non-markup text blocks. The higher number of aligned pairs of the non-markup text blocks is found, the more likely it is the web pages are parallel.
+		
+		\item \textit{r} \quad The correlation of lengths of the aligned non-markup blocks. The authors assume that for each pair of parallel web pages, it is likely that the lengths of their corresponding text blocks are in linear relationship. This means that shorter text blocks of one page correspond to the shorter text blocks of the other page, and so it is with medium and longer blocks. The Pearson~\cite{Pearson95} correlation coefficient is approximately $1.0$ in such scenarios, indicating positive correlation.
+		 
+		\item \textit{p} \quad The significance level for the correlation of lengths of the aligned non-markup blocks. This measure describes the reliability of the previous one. The system requires the value to be less than $0.05$, which corresponds to more than $95\%$ confidence that the correlation value was not obtained by chance.
+	\end{itemize}
+\end{enumerate}
+
+\subsection{STRAND: Results}
+\label{subsection:strand_results}
+
+At first, the authors used a set of manually, empirically chosen thresholds for the discussed scalar values based on their observations from an experiment with English--Spanish development data. The thresholds seemed to perform well also when testing on English--French and English--Chinese data. Later, they investigated options of optimizing the binary decision task, whether to label the candidate pair of web pages as parallel or not, based on the mentioned scalar values. They came up with the idea of building a supervised classifier utilizing the C5.0\footnote{\url{http://www.rulequest.com/demoeula.html} (accessed April 3, 2016)} decision tree software. With the original manually chosen thresholds, the system achieved $68.6\%$ recall at $100.0\%$ precision, while using the learned classifier it achieved $84.1\%$ recall on average at the cost of lower $95.8\%$ precision.
+
+\subsection{STRAND: Summary}
+\label{subsection:strand_summary}
+	
+STRAND is one of the pioneers in the field of tools for parallel corpora acquisition from the web. Its authors have introduced some of the ideas still present in other similar tools. We consider the later added supervised binary classification as an effective approach.
+
+\section{Mining Wikipedia}
+\label{section:mining_wikipedia}
+
+In previous related work, the researchers have developed a method~\cite{Wolk14} that can build subject-aligned comparable corpora, which are later refined to obtain truly parallel sentence pairs. The efficiency of the method is demonstrated on the Polish--English Wikipedia\footnote{\url{https://www.wikipedia.org/} (accessed April 3, 2016)} content. 
+
+In order to better understand this method, the authors suggest distinguishing between a few types of corpora according to their properties:
+
+\begin{itemize}
+	\item A \textit{parallel corpus} is the most valued and rare type. It can be defined as a corpus that contains quality translations of documents in multiple languages. Such a corpus is already aligned or should be very easy to align at the sentence level.
+
+	\item A \textit{noisy-parallel corpus} contains bilingual sentences that are not perfectly aligned or the quality of the translations is poor. However, the majority of documents should be present in the corpus, including their translations.
+	
+	\item A \textit{comparable corpus} consists of bilingual documents that are neither sentence-aligned nor mutual translations. Nevertheless, the documents should be at least topic-aligned.
+	
+	\item A \textit{quasi-comparable corpus} includes very heterogeneous and very non-parallel documents that do not even have to be topic-aligned. 
+\end{itemize}
+
+The authors have proposed a methodology which can extract a truly parallel corpus from a non-sentence-aligned one, such as a noisy-parallel or comparable. The implementation of the methodology has the form of a pipeline which includes specialized tools for obtaining, aligning, extracting, and filtering text data. This pipeline is explained in the following text.
+
+\subsection{Mining Wikipedia: Procedure}
+\label{subsection:mining_wikipedia_procedure}
+
+\begin{enumerate}
+	\item Web crawling is the first step in the process. The pipeline includes a specialized web crawler dedicated solely to processing the Wikipedia website. The crawler requires a hyperlink to a specific article, preferably written in the less frequent of the two languages. For the Polish--English language pair this would be Polish. With the link to the Polish article, the crawler downloads its page and also other pages in the topic domain (following the links on the pages), together with their corresponding English versions. With the HTML web pages obtained, the crawler extracts and cleans their textual content. This means that all links, figures, pictures, menus, references, and other unwanted parts of the data are removed from further processing. The bilingual extracted texts are then tagged with unique IDs to form a topic-aligned comparable corpus.
+	
+	\item The system uses a two-step sentence alignment method provided by hunalign. The pipeline does not provide any dictionary to hunalign. Without a dictionary, hunalign first aligns the sentences using just the Gale-Church~\cite{Gale93} sentence-length algorithm. Then it builds an automatic dictionary based on the sentence alignment from the first run. This dictionary is used in the second run to realign the alignment, improving the result.
+	
+	Like the majority of sentence aligners, hunalign does not perform well when the order of corresponding segments is different for two languages. This happens when segment ``A'' is followed by ``B'' in one language, while in the other one ``B'' is followed by ``A''. The method deals with this problem by applying a posteriori filtering process on the results obtained from the hunalign. The goal of the filtering process is to find the correct alignment for each source sentence if such alignment exists, or to remove the sentence from the resulting corpus otherwise.
+	
+	\item The filtering strategy of the pipeline is to find the correct translation for each Polish sentence using a translation engine. Given an MT system, the filtering process first translates all the Polish sentences into English. Then it uses a series of heuristics to compare the obtained machine-translated sentences with the original English sentences. The authors have considered many ways to measure the similarity of two sentences in the same language. 
+	
+	One of the measures is defined as the number of common words divided by the total number of words in both sentences. Removing the stop words\footnote{usually the most common words in the language with very little meaning} (e.g. ``a'' or ``the'') prior to the measurement yields more precise results. When comparing the machine translated sentence with the original one, the translated one often contains a stem of a corresponding word (e.g. ``boy'' vs ``boys''). This cannot be detected by the described measure. Another important aspect ignored by this measure is the order of words. To tackle this, the authors added another measure based on the concept of string similarity.
+
+	Synonyms are another problem. In order to take them into account the method uses WordNet\textregistered{}\footnote{\url{https://wordnet.princeton.edu/} (accessed April 3, 2016)}~\cite{Miller95}\cite{Fellbaum98} together with the NLTK\footnote{\url{http://www.nltk.org/} (accessed April 3, 2016)}~\cite{Loper02} Python module. The method generates multiple derived sentences for each original sentence using synonyms. The generated sentences are then compared in a many-to-many relation.
+	
+	To obtain the best results, the script that covers the filtering process provides the ability to let the user choose multiple filtering heuristic functions with different acceptance rates. The faster functions, usually with lower quality results, are calculated first. If they find a result with a very high acceptance rate, their result is accepted as the final one. Otherwise, slower functions, with higher precision in general, are used in the filtering process.
+\end{enumerate}
+
+The filtering procedure of the method requires a translation engine. A custom one was built to be used. The training data included Polish--English parallel data for various domains from OPUS. To increase the system's precision, the authors adapted it to Wikipedia using the dump of all English content as a language model. The underlying MT system was based on Moses~\cite{Koehn07}\cite{Moses} toolkit.
+
+\subsection{Mining Wikipedia: Results}
+\label{subsection:mining_wikipedia_results}
+
+The conducted experiments show that the filtering method has quite good precision of more than $95\%$. The results also correlate with human evaluations. The method is language independent and supervised, as it needs a parallel corpus for the initial training of the SMT system. The amount of obtained data, in other words, the method's recall, is absolutely not satisfactory. Authors suggested that an iterative approach could increase the recall. In such a scenario, after each iteration, the newly acquired parallel corpus would help to build a domain-specific vocabulary for hunalign and to retrain the SMT system.
+
+\subsection{Mining Wikipedia: Summary}
+\label{subsection:mining_wikipedia_summary}
+
+The described pipeline shares some common features with our method. In particular, both methods focus on extraction of truly parallel corpora from noisy data. Unfortunately, it is hard to tell to what extent it would be possible to optimize the set of chosen heuristic functions and their acceptance rates to gain better overall recall. This would require further experiments with the system, which would need to be obtained and deployed locally.
+
+\section{Mining Common Crawl}
+\label{section:mining_common_crawl}
+
+Another interesting project~\cite{Smith13} closely related to ours is the one focused on mining parallel corpora on the web-scale from the Common Crawl~\cite{CommonCrawl} dataset. This work is heavily based on the previously described and discussed STRAND~\cite{Resnik03} algorithm. Using a set of common two- or three-letter language codes, this method achieved to mine parallel corpora for dozens of language pairs from 32 terabyte (TB) large dataset in a time span shorter than a single day. The amount of parallel data acquired in this way is large and the quality is reasonable. Moreover, the parallel corpora obtained cover data from various domains. These corpora provably increase the performance of machine translation systems if included in the training process.
+
+The authors argue that any sophisticated method for mining parallel corpora from the web requires direct access to a larger dataset consisting of crawled web pages together with the computing power to process them. They claim that these large-scale web-crawled datasets were, until recently, available solely to large companies with the resources to crawl, store, and process the data from the entire web. Only recently, the Common Crawl non-profit organization began to provide a large-scale partial copy of the web to researches, companies, and individuals at no cost for research and analysis.
+
+The Common Crawl corpus is stored and hosted by Amazon Web Services\footnote{\url{https://aws.amazon.com/} (accessed April 4, 2016)} as a part of Public Data Sets\footnote{\url{https://aws.amazon.com/public-data-sets/} (accessed April 4, 2016)} in Simple Storage Service (S3)\footnote{\url{https://aws.amazon.com/s3/} (accessed April 4, 2016)}. It can be either downloaded to a local cluster, accessed from Amazon Elastic Compute Cloud (EC2)\footnote{\url{https://aws.amazon.com/ec2/} (accessed April 4, 2016)}, or processed using the Amazon Elastic MapReduce (EMR)\footnote{\url{https://aws.amazon.com/elasticmapreduce/} (accessed April 4, 2016)} service. This section includes only a brief description of the Common Crawl dataset and the MapReduce~\cite{Dean04} framework necessary for us to understand this project. The following text describes the flow of the method proposed by this project.
+
+\subsection{Mining Common Crawl: Procedure}
+\label{subsection:mining_common_crawl_procedure}
+
+\begin{enumerate}
+	\item The first step in the pipeline performs identification of potentially parallel pairs of web pages, using the Amazon EMR framework. This is the only step executed remotely on the Amazon servers. All the other steps are performed locally, using the downloaded dataset created in the first step. The Amazon EMR is chosen as the processing framework because the MapReduce paradigm suits the task well. For the sake of brevity, we can describe the Common Crawl corpus as a huge set of crawled and stored web pages in the form of HTML requests and their responses. To briefly introduce the MapReduce framework, it is a mechanism which allows us to iteratively process all the crawled HTML requests and responses in the corpus in a distributed manner. 
+	
+	The method starts by remotely executing the MapReduce application, which implements two phases: \textit{map} and \textit{reduce}. The intention is to scale down the vast amount of crawled web pages to a selection of candidates possible to process locally.
+	
+	During the map phase, the method iterates over each web page entry in the corpus. It scans the URL of the page, searching for the occurrences of two types of substrings:
+	
+	\vbox{
+	\begin{itemize}
+		\item Language codes in ISO 639 format (two- or three-letter codes).
+		\item Language names in English and also in the language of their origin.
+	\end{itemize}
+	}
+	
+	If such a substring, surrounded by non-alphanumeric characters, is present in the URL the page is identified as potentially having parallel versions. In this case, the method outputs the URL of the page with the matching substring replaced by a single asterix symbol. It also marks down the language associated with the replaced substring. For example, when processing the page with URL \texttt{http://www.ksi.mff.cuni.cz/en/}, the method would output the following key-value pair with the composite value:
+	
+	\vbox{
+	\begin{itemize}
+		\item Key: \texttt{http://www.ksi.mff.cuni.cz/*/}.
+		\item Value:
+		\begin{itemize}[label=$\circ$]
+			\item \texttt{http://www.ksi.mff.cuni.cz/en/} (original URL);
+			\item English (language associated with the code);
+			\item full HTML structure of the web page.
+		\end{itemize}
+	\end{itemize}
+	}
+	
+	In the reduce phase, the method obtains all the values having the same key, i.e the  language-independent URL. If there are at least two items associated with the same key having different languages marked down, the method outputs all the values for such a key.
+	
+	Upon completion of the MapReduce execution, the resulting dataset is downloaded to a local cluster for further processing. This dataset is relatively small compared to the original one, and it can be processed locally.
+	
+	\item The rest of the process is similar to STRAND (see Section\ref{section:strand}). In order to determine which web pages are parallel, the method linearizes their HTML structures in the same way as STRAND does. Additionally some HTML elements are ignored (e.g. \texttt{<font>} or \texttt{<a>}). The pairs of sequences are aligned using an algorithm based on dynamic programming which optimizes the number of matching tokens. The alignment is used to calculate the same set of measures defined by STRAND. The result of this step is a set of matching text blocks gathered from the pairs of corresponding web pages.
+	
+	Also inspired by STRAND, the project's authors tried to train the maximum entropy classifier for the Spanish--English language pair by using a set of 101 manually aligned and annotated pairs of web pages. However, it turned out that even when using the best performing subset of the features, the classifier did not outperform a na\"{\i}ve one, which considers every pair of web pages to be parallel. They argue that this was caused by the unbalanced nature of the annotated training data, where $80\%$ of the pairs were parallel. In the end, they decided to exclude the classifier from the pipeline.	
+	
+	\item The pairs of matching text blocks then pass through the process of segmentation. The method uses the Punkt sentence splitter from the NLTK~\cite{Loper02} Python module to perform segmentation at both the sentence and word level.
+	
+	\item With segmentation done, each of the matching text blocks is sentence-aligned using the Gale and Church~\cite{Gale93} algorithm. The output of the execution can be regarded as a parallel corpus.
+	
+	\item Lastly, the process includes the final cleaning of the produced parallel corpus. The whole pipeline does not perform any boilerplate removal in the previous steps. Since the authors decided not to do so, they at least proposed to remove the pairs of segments where either both segments are identical, or one of the segments appears multiple times in the corpus.
+\end{enumerate}
+
+\subsection{Mining Common Crawl: Results}
+\label{subsection:mining_common_crawl_results}
+
+To estimate the recall of the heuristic used for candidate selection, the same method was applied on a set of previously mined parallel pairs of URLs included in the French--English Gigaword~\cite{Burch11} corpus. As a result, $45\%$ of all pairs have been discovered. Inclusion of one-letter language codes (e.g. ``f'' for French, ``e'' for English) increased the recall of the method's recall to $74\%$, but the authors decided not to use such codes out of concern that the system might lose precision. In order to estimate the method's precision, a manual analysis was conducted, where 200 randomly selected sentence pairs were compared for 3 language pairs. For the German--English pair, $78\%$ of the mined data represented perfect translations, $4\%$ were paraphrases, and $18\%$ represented misalignments. Additionally, $22\%$ of true positives were probably machine translations, and in $13\%$ of all true positives, one sentence contained some extra content not present in the other.
+
+\subsection{Mining Common Crawl: Summary}
+\label{subsection:mining_common_crawl_summary}
+
+In terms of large-scale processing, the project of mining Common Crawl dataset is unique in the field. A special approach is needed when processing hundreds of terabytes large datasets. The Common Crawl dataset is a perfect example of Big Data~\cite{Holubova15}, which are rising in popularity recently. The method is a baseline idea of how to mine parallel corpora from vast amount of web-crawled data.
+
+\section{Summary}
+\label{section:related_work_summary}
+
+Bitextor searches for the pairs of parallel web pages by comparing their HTML structures and contents. The structures are compared using a method based on dynamic programming. When comparing the contents, Bitextor uses bag-of-words model powered by a bilingual dictionary. 
+
+PaCo\textsuperscript{2} reduces the number of comparisons by using a set of heuristics including length and file size comparison. To find pairs of parallel web pages, it applies a set of filters. These include inspecting the links between a pair's pages and similarities in their URLs. However, the most important filter compares the HTML structures and contents. Unlike Bitextor, PaCo\textsuperscript{2} compares the contents by identifying the common universal entities (e.g. numbers or e-mail addresses). This approach is unsupervised and language independent.
+
+To reduce the number of comparisons, STRAND uses heuristics similar to those in PaCo\textsuperscript{2}. It comes with an idea to train a decision tree model to classify pairs of web pages as parallel or not. The model uses a set of measures defined on the differences between the two HTML structures. This approach is supervised, as it needs to be trained using a set of, preferably, manually aligned web pages.
+
+The method of mining parallel data from Common Crawl dataset uses the MapReduce framework to refine the candidates, which are then processed locally by a STRAND-like method. The web pages are considered to be candidates if they have the same URLs stripped from the language codes.
+
+The method of mining Wikipedia takes a different approach. For a particular topic, it collects pairs consisting of an article and its version in the other language. The method assumes that the two articles may have different HTML structure and order of the textual context. The pair's articles are aligned at the sentence level, and the resulting alignments are refined with the help of a pre-trained SMT system.
+
+All of the described methods, except the one for mining Wikipedia, search for parallel content only in the form of complete web pages with a similar HTML structure. Although the method for mining Wikipedia does not require the pairs of article pages to have similar structure, the quality of its results depends on the degree of correspondence between the articles' segments and their order.
