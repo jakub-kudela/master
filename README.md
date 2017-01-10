@@ -4,7 +4,7 @@ Click to edit education descriptionIn master's thesis I have focused on the NLP 
 
 ## Content
 
-`Thesis/` - the thesis in PDF format and its zipped \LaTeX\ source code;  
+`Thesis/` - the thesis in PDF format and its LaTeX source code;  
 `Output/` - the acquired parallel corpus and the experiments' results;  
 `CommonCrawl/` - utilities for processing of the CommonCrawl dataset;  
 `CzEng/` - utilities for processing of the CzEng 1.0 dataset;  
