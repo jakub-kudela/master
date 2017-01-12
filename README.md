@@ -1,6 +1,6 @@
 # Master's Thesis: Mining Parallel Corpora from the Web
 
-Click to edit education descriptionIn master's thesis I have focused on the NLP task of mining parallel corpora from the Web. The work is based on the bilingual extension of the **word2vec** model—**bivec** and the **locality-sensitive hashing**.
+In master's thesis I have focused on the NLP task of mining parallel corpora from the Web. The work is based on the bilingual extension of the **word2vec** model—**bivec** and the **locality-sensitive hashing**.
 
 ## Content
 
